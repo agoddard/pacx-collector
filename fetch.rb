@@ -37,9 +37,7 @@ end
 
 
 sources = %w(weather CTDox DatawellMOSE PowerStatus basic Fluorometer)
-bots = %w(Benjamin FontaineMaru PapaMau PiccardMaru)
-
-#Hermes and MBARIOAWaveGlider data having issues currently
+bots = %w(Benjamin PapaMau FontaineMaru PiccardMaru)
 
 
 sources.each do |source|
