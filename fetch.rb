@@ -5,16 +5,17 @@ require 'ap'
 # test Airmar PB200 weather station on glider Benjamin
 
 
+#If you don't specify any results variables, the results table will include columns for all of the variables in the dataset.
+
 def fetch_data(dataset)
   base_url = "http://data.liquidr.com/erddap/tabledap"  
-  # set attributes for now
-  attributes = 'latitude,longitude,time,id,wVersion,flags,temperature,airPressure,avgWindSpeed,maxWindSpeed,stdDevWindSpeed,avgWindDirection,stdDevWindDir,nWindSamples&time>=2011-12-26T00:00:00Z'
-  url = "#{base_url}/#{dataset}.json?#{attributes}"
+  timerange = '>=2011-12-26T00:00:00Z'
+  url = "#{base_url}/#{dataset}.json?time#{timerange}"
   resp = Net::HTTP.get_response(URI.parse(URI.encode(url)))
   data = resp.body
   result = JSON.parse(data)
   if result.has_key? 'Error'
-    raise "web service error"
+    raise "API error"
   end
   return result
 end
