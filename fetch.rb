@@ -1,6 +1,13 @@
 require 'json'
 require 'net/http'
-require 'ap'
+require 'date'
+require 'time'
+
+class DateTime
+  def to_epoch
+    self.to_time.to_i
+  end
+end
 
 
 def fetch_data(dataset)
@@ -23,7 +30,7 @@ def build_triples(dataset)
   raise "time column is wrong" if columns[2] != 'time'
   pacx['table']['rows'].each_with_index do |record,index|
     (0..attributes).each do |i|
-      puts "#{record[2]},#{dataset}.#{columns[i]},#{record[i]}"
+      puts "#{DateTime.parse(record[2]).to_epoch},#{dataset}.#{columns[i]},#{record[i]}"
     end
   end  
 end
