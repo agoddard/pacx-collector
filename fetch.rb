@@ -8,9 +8,10 @@ require 'ap'
 #If you don't specify any results variables, the results table will include columns for all of the variables in the dataset.
 
 def fetch_data(dataset)
-  base_url = "http://data.liquidr.com/erddap/tabledap"  
+  base_url = "http://data.liquidr.com/erddap/tabledap"
   timerange = '>=2011-12-26T00:00:00Z'
-  url = "#{base_url}/#{dataset}.json?time#{timerange}"
+  url = "#{base_url}/#{dataset}.json?&time#{timerange}"
+  puts url
   resp = Net::HTTP.get_response(URI.parse(URI.encode(url)))
   data = resp.body
   result = JSON.parse(data)
