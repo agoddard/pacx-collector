@@ -6,6 +6,9 @@ bots = %w(Benjamin PapaMau FontaineMaru PiccardMaru)
 sources.each do |source|
   bots.each do |bot|
     dataset = "#{source}#{bot}"
-    build_triples(dataset)
+    data = build_triples(dataset)
+    data.each do |triple|
+      puts "#{triple[:time].to_epoch},#{triple[:datapoint]},#{triple[:value]}"
+    end
   end
 end
