@@ -24,16 +24,17 @@ def fetch_data(dataset)
 end
 
 def build_triples(dataset)
-  triples = []
+  collection = Array.new
   pacx = fetch_data(dataset)
   attributes = pacx['table']['columnNames'].size - 1
   columns = pacx['table']['columnNames']
   raise "time column is wrong" if columns[2] != 'time'
   pacx['table']['rows'].each_with_index do |record,index|
+    triples = Array.new
     (0..attributes).each do |i|
-      triple = { :time => DateTime.parse(record[2]), :metric => "#{dataset}.#{columns[i]}", :value => record[i] }
-      triples << triple
+      triples << { :time => DateTime.parse(record[2]), :metric => "#{dataset}.#{columns[i]}", :value => record[i] }
     end
+    collection << triples
   end
-  return triples
+  return collection
 end
