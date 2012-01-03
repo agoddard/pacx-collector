@@ -3,9 +3,12 @@ require 'nokogiri'
 require 'open-uri'
 
 dataset = "ship"
-# data = build_triples(dataset)
+data = build_triples(dataset)
 
 base_url = "http://www.marinetraffic.com/ais/shipdetails.aspx?MMSI="
+
+# find ships nearby
+puts data
 
 #test id
 # id = 636091941 #cargo
@@ -32,5 +35,9 @@ ship_name = detail.xpath("//h1").first.text
 
 
 #calculate heading and distance from glider
+
+
+
+
 
 puts "We just passed the #{detail.children[@ship_type_index].to_s.split.first.downcase} vessel \"#{ship_name}\", she's a #{detail.children[@ship_flag_index].to_s.strip} flagged vessel on her way to #{detail.children[@ship_destination_index].to_s.strip.capitalize}"

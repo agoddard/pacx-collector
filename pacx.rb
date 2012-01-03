@@ -31,7 +31,7 @@ def build_triples(dataset)
   raise "time column is wrong" if columns[2] != 'time'
   pacx['table']['rows'].each_with_index do |record,index|
     (0..attributes).each do |i|
-      triple = { :time => DateTime.parse(record[2]), :datapoint => "#{dataset}.#{columns[i]}", :value => record[i] }
+      triple = { :time => DateTime.parse(record[2]), :metric => "#{dataset}.#{columns[i]}", :value => record[i] }
       triples << triple
     end
   end

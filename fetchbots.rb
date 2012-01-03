@@ -8,7 +8,7 @@ sources.each do |source|
     dataset = "#{source}#{bot}"
     data = build_triples(dataset)
     data.each do |triple|
-      puts "#{triple[:time].to_epoch},#{triple[:datapoint]},#{triple[:value]}"
+      puts "#{triple[:time].to_epoch},#{triple[:metric]},#{triple[:value]}"
     end
   end
 end
