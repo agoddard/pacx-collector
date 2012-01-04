@@ -1,11 +1,11 @@
 require_relative 'pacx.rb'
 
-sources = %w(weather CTDox DatawellMOSE PowerStatus basic Fluorometer)
+measurements = %w(weather CTDox DatawellMOSE PowerStatus basic Fluorometer)
 bots = %w(Benjamin PapaMau FontaineMaru PiccardMaru)
 
-sources.each do |source|
+measurements.each do |measurement|
   bots.each do |bot|
-    dataset = "#{source}#{bot}"
+    dataset = "#{measurement}#{bot}"
     data = build_triples(dataset)
     data.each do |collection|
       collection.each do |triple|
