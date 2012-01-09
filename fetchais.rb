@@ -11,9 +11,7 @@ end
 def ship_data(mssi_id)
   base_url = "http://www.marinetraffic.com/ais/shipdetails.aspx?MMSI="
   page = Nokogiri::HTML(open("#{base_url}#{mssi_id}"))
-
   raise "Ship not found" if page.at('//h2[contains(.,"Non-existent Vessel")]') || page.at('//h1[contains(.,"The requested service is unavailable.")]')
-
   detail = page.at('//div[starts-with(@id,"detailtext")]')
   ship = {}
   detail.children.each_with_index do |child,index|
@@ -32,7 +30,6 @@ def ship_data(mssi_id)
   end
   ship[:name] = titleize_ship(detail.xpath("//h1").first.text)
   ship[:image] = page.css('img#picholder').first.attribute('src').to_s rescue nil
-  
   return ship
 end
 
@@ -45,7 +42,7 @@ def tweet(glider,ship,distance)
   message = "#{glider} just noticed the #{ship[:type]} vessel #{ship[:name]}, she's a #{ship[:flag]} flagged vessel"
   message << " on her way to #{ship[:destination]}" unless ship[:destination].empty?
   message << " (image: #{ship[:image]})" unless ship[:image].empty?
-  message << ". She's currently #{distance.round(2)} km away"
+  message << ". She's currently #{distance.round(2)} km away from #{glider}"
   message
 end
 

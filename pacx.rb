@@ -22,7 +22,8 @@ def find_ships
   data = fetch_data("ship",">=#{time_start}")['table']['rows']
   ships = {}
   data.each do |row|
-    ships[row[4]] = {:lat => row[0], :long => row[1], :time => row[2]}
+    mmsi_id = row[4]
+    ships[mmsi_id] = {:lat => row[0], :long => row[1], :time => row[2]} unless mmsi_id == "0"
   end
   return ships
 end
