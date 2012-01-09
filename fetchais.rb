@@ -1,17 +1,15 @@
 require_relative 'pacx.rb'
 require 'nokogiri'
 require 'open-uri'
+require 'haversine'
 
-dataset = "ship"
 
-
-def titleize_ship(stroing)
-  stroing.split.map{|w| w.capitalize}.join(' ').gsub('Ss','SS')
+def titleize_ship(ship_name)
+  ship_name.split.map{|w| w.capitalize}.join(' ').gsub('Ss','SS')
 end
 
 def ship_data(mssi_id)
   base_url = "http://www.marinetraffic.com/ais/shipdetails.aspx?MMSI="
-  puts "#{base_url}#{mssi_id}"
   page = Nokogiri::HTML(open("#{base_url}#{mssi_id}"))
 
   raise "Ship not found" if page.at('//h2[contains(.,"Non-existent Vessel")]') || page.at('//h1[contains(.,"The requested service is unavailable.")]')
@@ -33,7 +31,7 @@ def ship_data(mssi_id)
     end
   end
   ship[:name] = titleize_ship(detail.xpath("//h1").first.text)
-  ship[:image] = page.css('img#picholder').first.attribute('src') rescue nil
+  ship[:image] = page.css('img#picholder').first.attribute('src').to_s rescue nil
   
   return ship
 end
@@ -43,40 +41,24 @@ def extract_text(nokogiri_element)
   nokogiri_element.text.gsub(nbsp, " ").strip
 end
 
-def tweet(ship)
-  message = "We just passed the #{ship[:type]} vessel #{ship[:name]}, she's a #{ship[:flag]} flagged vessel"
+def tweet(glider,ship,distance)
+  message = "#{glider} just noticed the #{ship[:type]} vessel #{ship[:name]}, she's a #{ship[:flag]} flagged vessel"
   message << " on her way to #{ship[:destination]}" unless ship[:destination].empty?
+  message << " (image: #{ship[:image]})" unless ship[:image].empty?
+  message << ". She's currently #{distance.round(2)} km away"
   message
 end
 
 
 
-data = build_triples(dataset)
-
-# crank.filter.each
-
-dedup={}
-
-# find ships nearby
-data.each do |collection|
-  collection.each do |triple|
-    begin
-      puts tweet ship_data triple[:value] if triple[:metric] == "ship.MMSI" && !dedup[triple[:value]]
-      dedup[triple[:value]] = true
-    rescue RuntimeError
-    end
-  end
+def distance_to_glider(glider,ship_location)
+  bot = glider_position(glider)
+  Haversine.distance([bot[:lat],bot[:long]], [ship_location[:lat],ship_location[:long]]).to_km
 end
 
-# puts tweet ship_data 636091941
-# puts tweet ship_data 244212000
-#test id
-# id = 636091941 #cargo
-# id = 244212000 #fishing
-# puts tweet ship_data 636091941
 
-
-
-# get first ship's sighting timestamp, ID, location, heading and speed
-
-
+find_ships.each do |mssi_id,ship_location|
+  BOTS.each do |glider|
+    puts tweet(glider,ship_data(mssi_id),distance_to_glider(glider,ship_location)) rescue nil
+  end
+end

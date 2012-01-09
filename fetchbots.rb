@@ -1,15 +1,16 @@
 require_relative 'pacx.rb'
 
 measurements = %w(weather CTDox DatawellMOSE PowerStatus basic Fluorometer)
-bots = %w(Benjamin PapaMau FontaineMaru PiccardMaru)
+
+time_start = "2012-01-01T00:00:00Z"
 
 measurements.each do |measurement|
-  bots.each do |bot|
+  BOTS.each do |bot|
     dataset = "#{measurement}#{bot}"
-    data = build_triples(dataset)
+    data = build_triples(dataset,">=#{time_start}")
     data.each do |collection|
       collection.each do |triple|
-        puts "#{triple[:time].to_epoch},#{triple[:metric]},#{triple[:value]}"
+        puts "#{triple[:time].to_time.to_i},#{triple[:metric]},#{triple[:value]}"
       end
     end
   end
